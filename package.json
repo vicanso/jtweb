@@ -1,0 +1,19 @@
+{
+  "name" : "webtend",
+  "description" : "simple web server",
+  "version" : "0.0.1",
+  "author" : {
+    "name" : "vicanso 腻味",
+    "email" : "vicansocanbico@gmail.com"
+  },
+  "keywords" : [
+    "express",
+    "web framework"
+  ],
+  "dependencies" : {
+    "async": "latest",
+    "underscore" : "latest",
+    "connect-redis" : "latest",
+    "express" : "latest"
+  }
+}
