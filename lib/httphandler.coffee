@@ -25,7 +25,7 @@ httpHandler =
           return 
         if fileImporter
           html = appendJsAndCss html, fileImporter
-        if jtUtil.resIsAvailable res
+        if resIsAvailable res
           responseHTML req, res, html
     return @
   ###*
@@ -37,7 +37,7 @@ httpHandler =
    * @return {[type]}               [description]
   ###
   response : (req, res, data, headerOptions) ->
-    if jtUtil.resIsAvailable res
+    if resIsAvailable res
       # contentType = mime.lookup req.url
       # if contentType 
       #   res.header 'Content-Type', contentType
@@ -47,7 +47,7 @@ httpHandler =
       res.send data
     return @
   json : (req, res, data) ->
-    if jtUtil.resIsAvailable res
+    if resIsAvailable res
       res.json data
     return @
 
@@ -91,5 +91,16 @@ responseHTML = (req, res, html) ->
       res.send html
   else
     res.send html
+###*
+   * resIsAvailable 判断response是否可用
+   * @param  {response} res response对象
+   * @return {Boolean}
+  ###
+resIsAvailable = (res) ->
+  if res.headerSent
+    return false
+  else
+    return true
+
 
 module.exports = httpHandler
