@@ -2,8 +2,10 @@ express = require 'express'
 path = require 'path'
 jtUtil = require 'jtutil'
 _ = require 'underscore'
+fs = require 'fs'
 config = require '../config'
 express.mime.types['less'] = 'text/css'
+express.mime.types['styl'] = 'text/css'
 express.mime.types['coffee'] = 'application/javascript'
 
 
@@ -16,7 +18,7 @@ otherParser =
   ###
   parser : (staticPath) ->
     url = require 'url'
-    parseExts = ['.less', '.coffee']
+    parseExts = ['.less', '.coffee', '.styl']
     return (req, res, next) ->
       pathname = url.parse(req.url).pathname
       ext = path.extname pathname
@@ -31,6 +33,7 @@ otherParser =
             bufList.push chunk
             bufLength += chunk.length
           res.end = (chunk, encoding) ->
+            self = @
             if Buffer.isBuffer chunk
               bufList.push chunk
               bufLength += chunk.length
@@ -41,8 +44,8 @@ otherParser =
                 throw err
               else
                 buf = new Buffer data, encoding
-                write.call res, buf, encoding
-                return end.call res, chunk, encoding
+                res.header 'Content-Length' , buf.length
+                return end.call res, buf
         next()
 
 ###*
@@ -57,6 +60,7 @@ handle = (file, data, cbf) ->
   switch ext
     when '.less' then parseLess file, data, cbf
     when '.coffee' then parseCoffee file, data, cbf
+    when '.styl' then parseStylus file, data, cbf
 
 ###*
  * parseLess less编译
@@ -90,7 +94,19 @@ parseCoffee = (file, data, cbf) ->
       err.file = file
     cbf err, jsStr
 
-
+###*
+ * parseStylus stylus编译
+ * @param  {String} file 文件名
+ * @param  {String} data 文件数据
+ * @param  {Function} cbf 回调函数
+ * @return {[type]}      [description]
+###
+parseStylus = (file, data, cbf) ->
+  options = 
+    filename : file
+  if config.isProductionMode
+    options.compress = true
+  jtUtil.parseStylus data, options, cbf
 # tempFilesStatus = {}
 # initFileMergerEvent = () ->
 #   fileMergerEvent = require('./eventhandler').getEvent 'fileMergerEvent'

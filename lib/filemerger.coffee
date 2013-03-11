@@ -93,7 +93,7 @@ fileMerger =
         tempFilesStatus[linkFileHash] = 'merging'
         jtUtil.mergeFiles mergeFiles, saveFile, (data, file, saveFile) ->
           ext = path.extname file
-          if ext == '.less' || ext == '.css'
+          if ext == '.less' || ext == '.css' || ext == '.styl'
             imagesPath = path.relative path.dirname(saveFile), path.dirname(file)
             imagesPath = path.join imagesPath, '../images'
             data = data.replace /..\/images/g, imagesPath

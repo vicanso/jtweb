@@ -17,9 +17,9 @@
   writableProperties = {
     appPath: appPath,
     staticPrefix: "/static",
-    staticPath: "" + appPath + "/static",
-    tempStaticPrefix: '/static/temp',
-    tempPath: "" + appPath + "/static/temp",
+    staticPath: "" + appPath + "/statics",
+    tempStaticPrefix: '/statics/temp',
+    tempPath: "" + appPath + "/statics/temp",
     fileMaxAge: 15 * 60,
     dbCacheKeyPrefix: 'jtCache_',
     redisInfo: null

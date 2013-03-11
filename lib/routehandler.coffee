@@ -20,7 +20,7 @@ routeHandler =
             next err
           else if viewData
             if routeInfo.jadeView
-              viewData.fileImporter = new FileImporter debug
+              viewData.fileImporter = new FileImporter debug, routeInfo.staticsHost
               viewData.title ?= '未定义标题'
               httpHandler.render req, res, routeInfo.jadeView, viewData
             else

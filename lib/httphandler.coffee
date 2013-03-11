@@ -63,34 +63,35 @@ appendJsAndCss = (html, fileImporter) ->
   return html
 
 ###*
- * response 响应HTTP请求，若浏览器支持gzip，则将数据以gzip的形式返回
+ * response 响应HTTP请求
  * @param  {request} req  request
  * @param  {response} res  response
  * @param  {String} html 要返回的html数据
  * @return {[type]}      [description]
 ###
 responseHTML = (req, res, html) ->
-  acceptEncoding = req.header 'accept-encoding'
+  # acceptEncoding = req.header 'accept-encoding'
   res.header 'Content-Type', 'text/html'
   res.header 'Cache-Control', 'public, max-age=300'
   res.header 'Last-Modified', new Date()
-  if acceptEncoding
-    if acceptEncoding.indexOf 'gzip' != -1
-      zipFunc = 'gzip'
-    else if acceptEncoding.indexOf 'deflate' != -1
-      zipFunc = 'deflate'
-    if zipFunc
-      jtUtil[zipFunc] html, (err, gzipData) ->
-        if err
-          logger.error err
-          res.send html
-        else
-          res.header 'Content-Encoding', zipFunc
-          res.send gzipData
-    else
-      res.send html
-  else
-    res.send html
+  res.send html
+  # if acceptEncoding
+  #   if acceptEncoding.indexOf 'gzip' != -1
+  #     zipFunc = 'gzip'
+  #   else if acceptEncoding.indexOf 'deflate' != -1
+  #     zipFunc = 'deflate'
+  #   if zipFunc
+  #     jtUtil[zipFunc] html, (err, gzipData) ->
+  #       if err
+  #         logger.error err
+  #         res.send html
+  #       else
+  #         res.header 'Content-Encoding', zipFunc
+  #         res.send gzipData
+  #   else
+  #     res.send html
+  # else
+  #   res.send html
 ###*
    * resIsAvailable 判断response是否可用
    * @param  {response} res response对象

@@ -17,9 +17,10 @@ class FileImporter
   ###*
    * constructor 文件引入类
    * @param  {Boolean} debug 是否debug模式，debug模式下将.min.js替换为.js
+   * @param  {String} host 静态文件的host
    * @return {FileImporter}       [description]
   ###
-  constructor : (debug) ->
+  constructor : (debug, @host) ->
     @cssFiles = []
     @jsFiles = []
     @debug = debug || false
@@ -82,7 +83,7 @@ class FileImporter
   ###
   exportCss : (merge) ->
     self = @
-    return getExportFilesHTML self.cssFiles, 'css', self.debug, merge
+    return getExportFilesHTML self.cssFiles, 'css', self.debug, merge, @host
   ###*
    * exportJs 输出JS标签
    * @param  {Boolean} merge 是否合并js文件
@@ -90,7 +91,7 @@ class FileImporter
   ###
   exportJs : (merge) ->
     self = @
-    return getExportFilesHTML self.jsFiles, 'js', self.debug, merge
+    return getExportFilesHTML self.jsFiles, 'js', self.debug, merge, @host
 
 ###*
  * getExportFilesHTML 获取引入文件列表对应的HTML
@@ -98,9 +99,10 @@ class FileImporter
  * @param  {String} type  引入文件类型，现支持css, js
  * @param  {Boolean} debug 是否debug模式
  * @param  {Boolean} merge 是否需要合并文件
+ * @param  {String} host 静态文件的host
  * @return {String} 返回html标签内容
 ###
-getExportFilesHTML = (files, type, debug, merge) ->
+getExportFilesHTML = (files, type, debug, merge, host) ->
   exportAllFilesHTML = []
   exportMergeFilesHTML = []
   mergeFiles = []
@@ -116,7 +118,7 @@ getExportFilesHTML = (files, type, debug, merge) ->
         mergeFiles.push path.join config.appPath, config.staticPrefix, file
         isMerge = true
       file = path.join config.staticPrefix, file
-    exportHTML = getExportHTML file, type, suffix
+    exportHTML = getExportHTML file, type, suffix, host
     if !isMerge
       exportMergeFilesHTML.push exportHTML
     exportAllFilesHTML.push exportHTML
@@ -126,7 +128,7 @@ getExportFilesHTML = (files, type, debug, merge) ->
   linkFileName = fileMerger.mergeFilesToTemp mergeFiles, type
   if linkFileName
     linkFileName = path.join config.tempStaticPrefix, linkFileName
-    exportHTML = getExportHTML linkFileName, type, true
+    exportHTML = getExportHTML linkFileName, type, true, host
     exportMergeFilesHTML.push exportHTML
     return exportMergeFilesHTML.join ''
   else
@@ -149,13 +151,14 @@ isFilter = (file) ->
  * @param  {String} file   引入的文件
  * @param  {String} type   文件类型
  * @param  {Boolean} suffix 是否需要添加后缀（主要是为了增加版本好，用时间作区分）
+ * @param  {String} host 静态文件的host
  * @return {String} 返回相应的html
 ###
-getExportHTML = (file, type, suffix) ->
+getExportHTML = (file, type, suffix, host) ->
   html = ''
   switch type
-    when 'js' then html = exportJsHTML file, suffix
-    else html = exportCssHTML file, suffix
+    when 'js' then html = exportJsHTML file, suffix, host
+    else html = exportCssHTML file, suffix, host
   return html
 
 ###*
@@ -164,9 +167,11 @@ getExportHTML = (file, type, suffix) ->
  * @param  {Boolean} suffix 是否需要版本后缀
  * @return {String} 返回相应的html
 ###
-exportJsHTML = (file, suffix) ->
+exportJsHTML = (file, suffix, host) ->
   if suffix
     file += "?version=#{VERSION}"
+  if host && file.indexOf('http') != 0
+    file = host + file
   return '<script type="text/javascript" src="' + file + '"></script>'
 
 ###*
@@ -175,9 +180,11 @@ exportJsHTML = (file, suffix) ->
  * @param  {Boolean} suffix 是否需要版本后缀
  * @return {String} 返回相应的html
 ###
-exportCssHTML = (file, suffix) ->
+exportCssHTML = (file, suffix, host) ->
   if suffix
     file += "?version=#{VERSION}"
+  if host && file.indexOf('http') != 0
+    file = host + file
   return '<link rel="stylesheet" href="' + file + '" type="text/css" media="screen" />'
 
 

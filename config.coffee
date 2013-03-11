@@ -12,10 +12,10 @@ writableProperties =
   # 静态文件的请求URL前缀
   staticPrefix : "/static"
   # 静态文件目录
-  staticPath : "#{appPath}/static"
-  tempStaticPrefix : '/static/temp'
+  staticPath : "#{appPath}/statics"
+  tempStaticPrefix : '/statics/temp'
   # 合并文件的存放临时目录
-  tempPath : "#{appPath}/static/temp"
+  tempPath : "#{appPath}/statics/temp"
   # 静态文件的HTTP缓存时间（单位秒）
   fileMaxAge : 15 * 60
   dbCacheKeyPrefix : 'jtCache_'
