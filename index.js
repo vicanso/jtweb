@@ -32,7 +32,7 @@
     app.set('view engine', opts.viewEngine);
     app.set('views', opts.viewsPath);
     middleware.set({
-      appPath: opts.rootPath,
+      appPath: opts.appPath,
       redisClient: opts.redisClient
     });
     if (opts.firstMiddleware) {

@@ -115,7 +115,7 @@ getExportFilesHTML = (files, type, debug, merge, host) ->
       if debug && type == 'js'
         file = file.replace '.min.js', '.js'
       if !fileMerger.isMergeByOthers file
-        mergeFiles.push path.join config.staticPath, file
+        mergeFiles.push path.join config.appPath, file
         isMerge = true
       # file = path.join config.staticPrefix, file
     exportHTML = getExportHTML file, type, suffix, host
@@ -126,7 +126,6 @@ getExportFilesHTML = (files, type, debug, merge, host) ->
   if !merge || debug || mergeFiles.length == 0
     return exportAllFilesHTML.join ''
   linkFileName = fileMerger.mergeFilesToTemp mergeFiles, type
-  console.dir 'eeee'
   if linkFileName
     linkFileName = path.join config.tempStaticPrefix, linkFileName
     exportHTML = getExportHTML linkFileName, type, '?mergefile=true', host
