@@ -115,9 +115,9 @@ getExportFilesHTML = (files, type, debug, merge, host) ->
       if debug && type == 'js'
         file = file.replace '.min.js', '.js'
       if !fileMerger.isMergeByOthers file
-        mergeFiles.push path.join config.appPath, config.staticPrefix, file
+        mergeFiles.push path.join config.staticPath, file
         isMerge = true
-      file = path.join config.staticPrefix, file
+      # file = path.join config.staticPrefix, file
     exportHTML = getExportHTML file, type, suffix, host
     if !isMerge
       exportMergeFilesHTML.push exportHTML
@@ -126,9 +126,10 @@ getExportFilesHTML = (files, type, debug, merge, host) ->
   if !merge || debug || mergeFiles.length == 0
     return exportAllFilesHTML.join ''
   linkFileName = fileMerger.mergeFilesToTemp mergeFiles, type
+  console.dir 'eeee'
   if linkFileName
     linkFileName = path.join config.tempStaticPrefix, linkFileName
-    exportHTML = getExportHTML linkFileName, type, true, host
+    exportHTML = getExportHTML linkFileName, type, '?mergefile=true', host
     exportMergeFilesHTML.push exportHTML
     return exportMergeFilesHTML.join ''
   else
@@ -164,12 +165,15 @@ getExportHTML = (file, type, suffix, host) ->
 ###*
  * exportJsHTML 返回引入JS的标签HTML
  * @param  {String} file   引入的文件
- * @param  {Boolean} suffix 是否需要版本后缀
+ * @param  {Boolean, String} suffix 是否需要版本后缀
  * @return {String} 返回相应的html
 ###
 exportJsHTML = (file, suffix, host) ->
   if suffix
-    file += "?version=#{VERSION}"
+    if _.isBoolean
+      file += "?version=#{VERSION}"
+    else
+      file += suffix
   if host && file.indexOf('http') != 0
     file = host + file
   return '<script type="text/javascript" src="' + file + '"></script>'
@@ -182,7 +186,10 @@ exportJsHTML = (file, suffix, host) ->
 ###
 exportCssHTML = (file, suffix, host) ->
   if suffix
-    file += "?version=#{VERSION}"
+    if _.isBoolean
+      file += "?version=#{VERSION}"
+    else
+      file += suffix
   if host && file.indexOf('http') != 0
     file = host + file
   return '<link rel="stylesheet" href="' + file + '" type="text/css" media="screen" />'

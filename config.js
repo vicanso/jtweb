@@ -16,7 +16,6 @@
 
   writableProperties = {
     appPath: appPath,
-    staticPrefix: "/static",
     staticPath: "" + appPath + "/statics",
     tempStaticPrefix: '/statics/temp',
     tempPath: "" + appPath + "/statics/temp",

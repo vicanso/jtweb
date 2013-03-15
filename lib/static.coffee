@@ -13,10 +13,10 @@ staticHandler =
   ###
   handler : (staticPath, staticPrefix) ->
     staticPath ?= config.staticPath
-    staticPrefix ?= config.staticPrefix
-    staticPrefixLength = staticPrefix.length
-    tempStaticPrefix = config.tempStaticPrefix
-    tempStaticPrefixLength = tempStaticPrefix.length
+    # staticPrefix ?= config.staticPrefix
+    # staticPrefixLength = staticPrefix.length
+    # tempStaticPrefix = config.tempStaticPrefix
+    # tempStaticPrefixLength = tempStaticPrefix.length
     # staticCompressHandler = express.compress {
     #   memLevel : 9
     # }
@@ -28,25 +28,17 @@ staticHandler =
       maxAge : maxAge
       redirect : false
     }
+    mergefileMarkStr = '?mergefile=true'
     return (req, res, next) ->
       # 先判断该url是否静态文件的请求（请求的前缀固定），如果是则处理该请求（如果可以压缩的则压缩数据）
-      if req.url.substring(0, staticPrefixLength) == staticPrefix
-        if req.url.substring(0, tempStaticPrefixLength) == tempStaticPrefix
-          isTempFile = true
-        req.url = req.url.substring staticPrefixLength
-        if isTempFile
-          path = require 'path'
-          tempFile = path.join(staticPath, req.url).replace /\?version=\d*/, ''
-          tempFileHandle tempFile, () ->
-            handler req, res, next
-        else
-          otherParser req, res, () ->
-            handler req, res, next
-        # staticCompressHandler req, res, () ->
-        #   otherParser req, res, () ->
-        #     handler req, res, next
+      if ~req.url.indexOf mergefileMarkStr
+        path = require 'path'
+        tempFile = path.join(staticPath, req.url).replace mergefileMarkStr, ''
+        tempFileHandle tempFile, () ->
+          handler req, res, next
       else
-        next()
+        otherParser req, res, () ->
+          handler req, res, next
 ###*
  * tempFileHandle 临时文件夹的文件处理
  * @param  {String} file 文件名

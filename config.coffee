@@ -9,8 +9,6 @@ appPath = path.dirname process.mainModule.filename
 
 writableProperties =
   appPath : appPath
-  # 静态文件的请求URL前缀
-  staticPrefix : "/static"
   # 静态文件目录
   staticPath : "#{appPath}/statics"
   tempStaticPrefix : '/statics/temp'

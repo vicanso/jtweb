@@ -19,6 +19,7 @@ httpHandler =
   render : (req, res, view, data) ->
     if data
       fileImporter = data.fileImporter
+      console.dir "view:#{view}"
       res.render view, data, (err, html) ->
         if err || !html
           console.error err
