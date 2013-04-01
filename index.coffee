@@ -108,6 +108,7 @@ initMongoDb = (dbConfigs) ->
     valiate : true
     timeOut : 0
     mongodb : dbConfigs
+    logger : require('jtlogger').getLogger 'MONGODB'
   }
 
 initRedis = (config) ->
@@ -129,8 +130,8 @@ middleware =
         when 'nocache' then nocacheHandler.set.apply nocacheHandler, args
     else if _.isObject options
       _.extend config, options
-  staticHandler : () ->
-    return require('./lib/static').handler()
+  staticHandler : (staticPath) ->
+    return require('./lib/static').handler staticPath
   sessionParser : () ->
     return session.parser()
   infoParser : () ->

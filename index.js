@@ -104,7 +104,8 @@
       queryTime: true,
       valiate: true,
       timeOut: 0,
-      mongodb: dbConfigs
+      mongodb: dbConfigs,
+      logger: require('jtlogger').getLogger('MONGODB')
     });
   };
 
@@ -134,8 +135,8 @@
         return _.extend(config, options);
       }
     },
-    staticHandler: function() {
-      return require('./lib/static').handler();
+    staticHandler: function(staticPath) {
+      return require('./lib/static').handler(staticPath);
     },
     sessionParser: function() {
       return session.parser();
