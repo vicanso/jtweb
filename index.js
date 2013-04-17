@@ -56,7 +56,9 @@
         opts.middleware = [opts.middleware];
       }
       _.each(opts.middleware, function(middleware) {
-        return app.use(middleware);
+        if (middleware) {
+          return app.use(middleware);
+        }
       });
     }
     if (opts.mode === 'production') {

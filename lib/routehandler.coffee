@@ -14,8 +14,9 @@ routeHandler =
   initRoutes : (app, routeInfos) ->
     _.each routeInfos, (routeInfo) ->
       handle = (req, res, next) ->
+        next = _.once next
         debug = !config.isProductionMode
-        routeInfo.handleFunc req, res, (err, viewData) ->
+        routeInfo.handler req, res, (err, viewData) ->
           if err
             next err
           else if viewData
@@ -31,6 +32,7 @@ routeHandler =
           else
             err = errorPage.error 500, "#{__filename}: the viewData is null"
             next err
+        , next
       middleware = routeInfo.middleware || []
       routes = routeInfo.route
       if !_.isArray routes

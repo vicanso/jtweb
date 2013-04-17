@@ -48,7 +48,8 @@ initApp = (options) ->
     if !_.isArray opts.middleware
       opts.middleware = [opts.middleware]
     _.each opts.middleware, (middleware) ->
-      app.use middleware
+      if middleware
+        app.use middleware
 
   if opts.mode == 'production'
     app.use express.limit '1mb'
