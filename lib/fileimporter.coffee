@@ -169,7 +169,7 @@ getExportHTML = (file, type, suffix, host) ->
 ###
 exportJsHTML = (file, suffix, host) ->
   if suffix
-    if _.isBoolean
+    if _.isBoolean suffix
       file += "?version=#{VERSION}"
     else
       file += suffix
@@ -185,7 +185,7 @@ exportJsHTML = (file, suffix, host) ->
 ###
 exportCssHTML = (file, suffix, host) ->
   if suffix
-    if _.isBoolean
+    if _.isBoolean suffix
       file += "?version=#{VERSION}"
     else
       file += suffix

@@ -27,17 +27,21 @@ initApp = (options) ->
   }
 
   if opts.firstMiddleware
-    app.use opts.firstMiddleware
+    if !_.isArray opts.firstMiddleware
+      opts.firstMiddleware = [opts.firstMiddleware]
+    _.each opts.firstMiddleware, (firstMiddleware) ->
+      app.use firstMiddleware
 
 
   # 静态文件处理
-  if !_.isArray opts.staticSetting
-    opts.staticSetting = [opts.staticSetting]
-  _.each opts.staticSetting, (staticSetting) ->
-    if staticSetting.mountPath
-      app.use staticSetting.mountPath, middleware.staticHandler staticSetting.path
-    else
-      app.use middleware.staticHandler staticSetting.path
+  if opts.staticSetting
+    if !_.isArray opts.staticSetting
+      opts.staticSetting = [opts.staticSetting]
+    _.each opts.staticSetting, (staticSetting) ->
+      if staticSetting.mountPath
+        app.use staticSetting.mountPath, middleware.staticHandler staticSetting.path
+      else
+        app.use middleware.staticHandler staticSetting.path
 
   # favicon的处理
   if opts.faviconPath
@@ -92,6 +96,7 @@ initApp = (options) ->
 
 initMongoDb = (dbConfigs) ->
   jtMongoDb = require 'jtmongodb'
+  jtRedis = require 'jtredis'
   defaultConfig = 
     immediatelyInit : true
     options :
@@ -104,10 +109,13 @@ initMongoDb = (dbConfigs) ->
     dbConfigs = [dbConfigs]
   _.each dbConfigs, (dbConfig, i) ->
     dbConfigs[i] = _.extend defaultConfig, dbConfig
+  delete dbConfigs.cacheClient
   jtMongoDb.set {
     queryTime : true
     valiate : true
     timeOut : 0
+    ttl : 300
+    cacheClient : jtRedis.getClient()
     mongodb : dbConfigs
     logger : require('jtlogger').getLogger 'MONGODB'
   }

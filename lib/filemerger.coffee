@@ -96,7 +96,7 @@ fileMerger =
           if ext == '.less' || ext == '.css' || ext == '.styl'
             imagesPath = path.relative path.dirname(saveFile), path.dirname(file)
             imagesPath = path.join imagesPath, '../images'
-            data = data.replace /..\/images/g, imagesPath
+            data = data.replace /..\/images/g, imagesPath.replace /\\/g, '\/'
           else if ext == '.coffee' || ext == '.js'
             data += ';'
           return data

@@ -36,18 +36,25 @@
       redisClient: opts.redisClient
     });
     if (opts.firstMiddleware) {
-      app.use(opts.firstMiddleware);
-    }
-    if (!_.isArray(opts.staticSetting)) {
-      opts.staticSetting = [opts.staticSetting];
-    }
-    _.each(opts.staticSetting, function(staticSetting) {
-      if (staticSetting.mountPath) {
-        return app.use(staticSetting.mountPath, middleware.staticHandler(staticSetting.path));
-      } else {
-        return app.use(middleware.staticHandler(staticSetting.path));
+      if (!_.isArray(opts.firstMiddleware)) {
+        opts.firstMiddleware = [opts.firstMiddleware];
       }
-    });
+      _.each(opts.firstMiddleware, function(firstMiddleware) {
+        return app.use(firstMiddleware);
+      });
+    }
+    if (opts.staticSetting) {
+      if (!_.isArray(opts.staticSetting)) {
+        opts.staticSetting = [opts.staticSetting];
+      }
+      _.each(opts.staticSetting, function(staticSetting) {
+        if (staticSetting.mountPath) {
+          return app.use(staticSetting.mountPath, middleware.staticHandler(staticSetting.path));
+        } else {
+          return app.use(middleware.staticHandler(staticSetting.path));
+        }
+      });
+    }
     if (opts.faviconPath) {
       app.use(express.favicon(opts.faviconPath));
     }
@@ -84,8 +91,9 @@
   };
 
   initMongoDb = function(dbConfigs) {
-    var defaultConfig, jtMongoDb;
+    var defaultConfig, jtMongoDb, jtRedis;
     jtMongoDb = require('jtmongodb');
+    jtRedis = require('jtredis');
     defaultConfig = {
       immediatelyInit: true,
       options: {
@@ -102,10 +110,13 @@
     _.each(dbConfigs, function(dbConfig, i) {
       return dbConfigs[i] = _.extend(defaultConfig, dbConfig);
     });
+    delete dbConfigs.cacheClient;
     return jtMongoDb.set({
       queryTime: true,
       valiate: true,
       timeOut: 0,
+      ttl: 300,
+      cacheClient: jtRedis.getClient(),
       mongodb: dbConfigs,
       logger: require('jtlogger').getLogger('MONGODB')
     });
